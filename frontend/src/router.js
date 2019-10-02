@@ -16,7 +16,7 @@ export default new Router({
     {
       path: '/game',
       name: 'game',
-      component: () => import('./views/About.vue')
+      component: () => import('./views/Game.vue')
     },
     {
       path: '/login',
