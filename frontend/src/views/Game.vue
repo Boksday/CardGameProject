@@ -11,7 +11,6 @@
         </div>
       </div>
     </div>
-
     <div>시도횟수 : {{tries}}</div>
     <div>초과시간 : {{timer}}</div>
 
