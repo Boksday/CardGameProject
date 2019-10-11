@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="card.game.web.mapper.TodoMapper">
+	<select id="getTodos" resultType="card.game.web.dto.Todo">
+		SELECT *
+		FROM todo
+	</select>
+	<select id="completeTodo" resultType="card.game.web.dto.Todo">
+		SELECT *
+		FROM todo
+		WHERE checked = 1;
+	</select>
+	<select id="notYetTodo" resultType="card.game.web.dto.Todo">
+		SELECT *
+		FROM todo
+		WHERE checked = 0;
+	</select>
+	<select id="getOneMaxTodo" resultType="Integer">
+		SELECT max(no)
+		FROM todo
+	</select>
+	<insert id="addTodo" parameterType="card.game.web.dto.Todo">
+		INSERT INTO todo(text,
+		checked)
+		VALUES(#{text}, #{checked})
+	</insert>
+	<delete id="deleteTodo" parameterType="card.game.web.dto.Todo">
+		DELETE FROM todo
+		WHERE
+		no=#{no}
+	</delete>
+	<update id="updateTodo" parameterType="card.game.web.dto.Todo">
+		UPDATE todo
+		SET text=#{text}
+		WHERE no=#{no}
+	</update>
+	<update id="clickTodo" parameterType="card.game.web.dto.Todo">
+		UPDATE todo
+		SET
+		checked=#{checked}
+		WHERE no=#{no}
+	</update>
+</mapper>
+
+

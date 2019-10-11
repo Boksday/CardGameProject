@@ -1,67 +1,60 @@
 <template>
     <div  class="game-card" >
         <div class="card-inner">
-            <div :class="filpCheck(card)" @click="cardFlip(card)" :style="{background: classCheck(card)}"></div>
+            <div :class="filpCheck" @click="cardFlip" :style="{background: classCheck}"></div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    props:['card'],
-    computed: {
-        filpCheck() {
-            return (card) =>{
-                return card.flipped == true ? 'card-front' : 'card-back'
-            }
-        },
-        classCheck() {
-            return (card)=>{
-                if(card.flipped){
-                    return card.color
-                }else{
-                    return 'black';
-                }
-            }
-        },
+  props: ['card'],
+  computed: {
+    filpCheck () {
+      return this.card.flipped === true ? 'card-front' : 'card-back'
     },
-    methods:{
-        cardFlip(c) {
-        const parent = this.$parent;
-        if(!c.toggleMode) return;
+    classCheck () {
+      if (this.card.flipped) {
+        return this.card.color
+      } else {
+        return 'black'
+      }
+    }
+  },
+  methods: {
+    cardFlip () {
+      const parent = this.$parent
+      if (!this.card.toggleMode) return
 
-        if(!parent.allToggleMode) return;
-        c.flipped = !c.flipped
-        c.toggleMode = false
-        parent.stackCards.push(c)
-        
-        if(parent.stackCards.length > 1){
-            parent.tries++
-            if(parent.stackCards[0].color === parent.stackCards[1].color){
-            parent.completeCards++;
-            parent.stackCards = []
-            }else{
-            parent.allToggleMode = false;
-            
-            var index1stackCard = parent.stackCards[0].index;
-            var index2stackCard = parent.stackCards[1].index;
-            parent.timeout = setTimeout(() => {
-                parent.cards[index1stackCard].flipped=false;
-                parent.cards[index2stackCard].flipped=false;
+      if (!parent.allToggleMode) return
+      this.card.flipped = !this.card.flipped
+      this.card.toggleMode = false
+      parent.stackCards.push(this.card)
 
-                parent.cards[index1stackCard].toggleMode=true;
-                parent.cards[index2stackCard].toggleMode=true;
-                parent.allToggleMode=true
-            }, 1200);
+      if (parent.stackCards.length > 1) {
+        parent.tries++
+        if (parent.stackCards[0].color === parent.stackCards[1].color) {
+          parent.completeCards++
+          parent.stackCards = []
+        } else {
+          parent.allToggleMode = false
 
+          var index1stackCard = parent.stackCards[0].index
+          var index2stackCard = parent.stackCards[1].index
+          parent.timeout = setTimeout(() => {
+            parent.cards[index1stackCard].flipped = false
+            parent.cards[index2stackCard].flipped = false
+            parent.cards[index1stackCard].toggleMode = true
+            parent.cards[index2stackCard].toggleMode = true
+            parent.allToggleMode = true
+          }, 800)
 
-            parent.stackCards = []
-
-            }
+          parent.stackCards = []
         }
+      }
     }
-    }
-    
+  }
+
 }
 </script>
 

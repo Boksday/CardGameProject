@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="card.game.web.mapper.RecordMapper">
+    <select id="selectRecordsByTime" resultType="card.game.web.dto.RecordDto">
+        SELECT * 
+        FROM record 
+        ORDER BY time ASC
+    </select>
+    <select id="selectRecordsByTries" resultType="card.game.web.dto.RecordDto">
+    	SELECT *
+    	FROM record
+    	ORDER BY tries ASC
+    </select>
+    <select id="personalRecord" parameterType="card.game.web.dto.UserDto" resultType="card.game.web.dto.RecordDto">
+    	select time, tries from record where 
+							time = (select min(time) from record where id=#{id}) and
+                            tries = (select min(tries) from record where id=#{id})
+    </select>
+    <insert id="insertRecord">
+    	INSERT INTO record(id, time, tries)
+    	VALUES (#{id}, #{time}, #{tries})
+    </insert>    
+</mapper>
+
+

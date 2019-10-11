@@ -1,13 +1,12 @@
 <template>
-  <div class="about">
+  <div class="gameWrapper">
     <h1>카드게임</h1>
     <v-btn @click="startGame">시작</v-btn>
-
-    <div class="cardWrapper" v-if="started" v-for="n in cards.length/6">
-      <card-component v-for="(card,index) in cards.slice(n*6-6,n*6)" :card="card" :key="index"></card-component>
+    <div v-if="started">
+      <div class="cardWrapper"  v-for="n in cards.length/6" :key="n">
+        <card-component v-for="(card,index) in cards.slice(n*6-6,n*6)" :card="card" :key="index"></card-component>
+      </div>
     </div>
-
-
     <div>시도횟수 : {{tries}}</div>
     <div>초과시간 : {{timer}}</div>
 
@@ -16,95 +15,85 @@
 </template>
 
 <script>
-import CardImgConst from '../utils/CardImgConst.js'
-import CardComponent from '../components/CardComponent.vue'
+import cardImgs from '../utils/CardImgVar'
+import CardComponent from '../components/CardComponent2.vue'
+import { mapActions, mapState, mapMutations } from 'vuex'
 export default {
-  components:{
+  components: {
     CardComponent
   },
-  data() {
-    return{
-      cards: [],
-      colors: [],
-      started: false,
-      stackCards: [],
-      allToggleMode: true,
-      tries:0,
-      timer:0,
-      timeout:null,
-      interval:null,
-      completeCards: 0,
+  data () {
+    return {
+      timer: 0,
+      timeout: null,
+      interval: null,
+      cardImg: []
     }
   },
   computed: {
+    ...mapState({
+      tries: (store) => store.card.tries,
+      user: (store) => store.user.user, // 유저 정보
+      cards: (store) => store.card.cards, // 렌더링할 카드들
+      completeCards: (store) => store.card.completeCards, // 완성된 카드들 숫자
+      stackCards: (store) => store.card.stackCards, // 현재 선택한 카드들
+      started: (store) => store.card.started, // 시작했나
+      allToggleMode: (store) => store.card.allToggleMode // 전체를 선택할 수 있는 때인지
+    }),
 
-    success() {
-      if( this.completeCards === 12 ){
+    // 게임 완료조건
+    success () {
+      if (this.completeCards === 12) {
         clearInterval(this.interval)
-        return true;
-      }else{
-        return false;
+        this.addRecord({
+          time: this.timer,
+          tries: this.tries,
+          id: this.user.id
+        })
+        return true
+      } else {
+        return false
       }
     }
   },
   methods: {
-    
-    startGame() {
-      this.completeCards = 0;
-      this.timer=0;
+    ...mapActions(['addRecord']),
+    ...mapMutations(['pushCard', 'setCompleteCard', 'toggleStarted', 'clearCards', 'setCardImg', 'spliceCardImg', 'clearTries']),
+    startGame () {
+      this.setCompleteCard(0)
+      this.timer = 0
 
       clearInterval(this.interval)
       this.interval = setInterval(() => {
-        this.timer++;
-      }, 1000);
-      this.tries=0;
-      this.started = true;
-      this.cards =[]
-      this.colors = [CardImgConst.JANUARY,
-                     CardImgConst.JANUARY,
-                     CardImgConst.FEBRUARY,
-                     CardImgConst.FEBRUARY,
-                     CardImgConst.MARCH,
-                     CardImgConst.MARCH,
-                     CardImgConst.APRIL,
-                     CardImgConst.APRIL,
-                     CardImgConst.MAY,
-                     CardImgConst.MAY,
-                     CardImgConst.JUNE,
-                     CardImgConst.JUNE,
-                     CardImgConst.JULY,
-                     CardImgConst.JULY,
-                     CardImgConst.AUGUST,
-                     CardImgConst.AUGUST,
-                     CardImgConst.SEPTEMBER,
-                     CardImgConst.SEPTEMBER,
-                     CardImgConst.OCTOBER,
-                     CardImgConst.OCTOBER,
-                     CardImgConst.NOVEMBER,
-                     CardImgConst.NOVEMBER,
-                     CardImgConst.DECEMBER,
-                     CardImgConst.DECEMBER
-                     ]
+        this.timer++
+      }, 1000)
+      this.clearTries()
+      this.toggleStarted()
+      this.clearCards()
 
-      for(var i=0  ; i < 24 ; i++){
-         this.cards.push({color: this.colors.splice(Math.ceil(Math.random() * this.colors.length)-1,1)[0],
-                           index: i,
-                           flipped: false, 
-                           toggleMode: true,
-                          })
+      this.cardImg = cardImgs
+
+      for (let i = 0; i < 24; i++) {
+        this.pushCard({
+          cardImg: this.cardImg.splice(Math.ceil(Math.random() * this.cardImg.length) - 1, 1)[0],
+          index: i,
+          flipped: false,
+          toggleMode: true
+        })
       }
-      console.log(this.cards)
-    },
-    
+    }
+
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearTimeout(this.timeout)
     clearInterval(this.interval)
-  },
+  }
 
 }
 </script>
 
 <style scoped>
-
+  .gameWrapper{
+    padding: 30px;
+  }
 </style>

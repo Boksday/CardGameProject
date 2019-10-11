@@ -10,13 +10,14 @@
 
                 <v-form
                     ref="form"
-                    v-model="valid"
-                    lazy-validation
+                    action="#"
+                    method="post"
+                    @submit.prevent="login"
                 >
                 <v-text-field
                     v-model="id"
-                    :rules="idRules"
                     label="아이디"
+                    name="id"
                     required
                 ></v-text-field>
 
@@ -25,12 +26,13 @@
                     type="password"
                     name="password"
                     label="비밀번호"
+                    ref="password"
                     ></v-text-field>
 
                 <v-btn
+                type="submit"
                 color="white"
                 class="mr-4"
-                @click="login"
                 >
                     로그인
                 </v-btn>
@@ -44,34 +46,31 @@
 </template>
 
 <script>
-import UserApi from '../axios/MembersInfo.js'
+
+import sha256 from 'js-sha256'
+import { mapActions } from 'vuex'
+import router from '../router'
 
 export default {
-    data() {
-        return{
-            id: '',
-            password: '',
-
-        }
-    },
-    mounted() {
-
-    },
-
-    methods: {
-        login() {
-            UserApi.loginValidCheck({
-                 id: this.id, 
-                 password: this.password
-                 })
-            .then((res) => {
-                if(res){
-                    alert('로그인성공')
-                }else{
-                    alert('로그인실패')
-                }
-            })
-        }
+  data () {
+    return {
+      id: '',
+      password: ''
     }
+  },
+
+  methods: {
+    ...mapActions(['userLogin']),
+    login () {
+      this.userLogin({
+        id: this.id,
+        password: sha256(this.password)
+      }).then((res) => {
+        if (res) {
+          router.replace('/')
+        }
+      })
+    }
+  }
 }
 </script>
