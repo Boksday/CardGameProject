@@ -1,64 +1,16 @@
 <template>
-  <v-app id="inspire">
-    <v-navigation-drawer
-      v-model="drawer"
-      :clipped="$vuetify.breakpoint.lgAndUp"
-      app
-    >
-      <v-list dense>
-
-        <template v-for="item in items">
-
-              <v-list-item @click="" :to="item.to">
-                  <v-icon>{{item.icon}}</v-icon>{{item.text}}
-              </v-list-item>
-
-        </template>
-
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar
-      :clipped-left="$vuetify.breakpoint.lgAndUp"
-      app
-      color="black darken-3"
-      dark
-    >
-      <v-toolbar-title
-        style="width: 300px"
-        class="ml-0 pl-4"
-      >
-
-        <span class="hidden-sm-and-down"><v-icon>android</v-icon> 카드게임</span>
-
-      </v-toolbar-title>
-      <div class="flex-grow-1"></div>
-
-      <v-btn icon to="signin">
-         <v-icon @click="">person_add</v-icon>
-      </v-btn>
-      <v-btn icon to="login">
-         <v-icon @click="">power_settings_new
-</v-icon>
-      </v-btn>
-
-    </v-app-bar>
-
-    <v-content>
-
-      <router-view> </router-view>
-
-    </v-content>
-
-    <v-dialog
-      v-model="dialog"
-      width="800px"
-    >
-      <v-card>
-
-      </v-card>
-    </v-dialog>
-  </v-app>
+  <div id="app">
+    <img src="./assets/logo.png">
+    <div>
+      <p>
+        If Element is successfully added to this project, you'll see an
+        <code v-text="'<el-button>'"></code>
+        below
+      </p>
+      <el-button>el-button</el-button>
+    </div>
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  </div>
 </template>
 <script>
 
@@ -79,3 +31,14 @@ export default {
 
 }
 </script>
+
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>

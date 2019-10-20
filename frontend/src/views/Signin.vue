@@ -3,7 +3,6 @@
         <v-layout>
             <v-flex>
          <center class="display-1 font-weight-bold"> 회원가입</center>
-            
 
         <v-card class="flex pa-10 ma-10 " xl5>
             <div>
@@ -13,15 +12,14 @@
                 lazy-validation
             >
             <div class="idField">
-            <v-text-field 
+            <v-text-field
                 v-model="id"
                 label="아이디"
                 :error="idCheck"
                 hint="4자 이상"
-                v-once="idInputClickChangeRed"
                 required
-            > 
-                
+            >
+
             </v-text-field>
             </div>
             <v-btn
@@ -37,8 +35,7 @@
                 type="password"
                 name="password"
                 label="비밀번호"
-                @keyup="pwdCheck()"
-                :error="passwordRulesCheck"
+                :error="pwdCheck"
                 hint="숫자+문자+특수문자 8글자 이상"
                 required
                 ></v-text-field>
@@ -46,8 +43,7 @@
                 v-model="passwordCheck"
                 type="password"
                 name="password"
-                @keyup="pwdValidCheck()"
-                :error="passwordValidCheck"
+                :error="pwdValidCheck"
                 label="비밀번호 확인"
             ></v-text-field>
             <v-text-field
@@ -72,73 +68,66 @@
 
 <script>
 import sha256 from 'sha256'
-import UserApi from '../axios/MembersInfo.js'
+import { mapActions } from 'vuex'
+import router from '../router'
 export default {
-    data() {
-        return {
-            id: '',
-            password: '',
-            passwordCheck:'',
-            nickName: '',
-            idCheck: false,
-            passwordRules: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/,
-            passwordRulesCheck: false,
-            passwordValidCheck: false,
-        }
-    },
-    computed:  {
-        pwdCheck() {
-            this.passwordRulesCheck = !this.passwordRules.test(this.password)
-        },
-        pwdValidCheck() {
-            if( this.password === this.passwordCheck ){
-                this.passwordValidCheck = false
-            }else{
-                this.passwordValidCheck = true
-            }
-        }
-    },
-    methods: {
-        idInputClickChangeRed() {
-            this.idCheck=true
-        },
-        createUser() {
-            console.log(this.id , sha256(this.password), sha256(this.passwordCheck), this.nickName)
-            UserApi.createUser({
-                id: this.id,
-                password: sha256(this.password),
-                nickName: this.nickName,
-            }).then((res) => {
-
-            })
-        },
-        idValid() {
-            UserApi.idCheck({
-                id: this.id
-            }).then((res) => {
-                console.log(res.data)
-                this.idCheck= res.data
-                console.log(this.idCheck)
-                if(res.data) {
-                    alert('중복된 아이디입니다. 다른 아이디를 사용해주세요.')
-                }else {
-                    alert('사용가능한 아이디입니다.')
-                }
-            })
-        },
-        
+  data () {
+    return {
+      id: '',
+      password: '',
+      passwordCheck: '',
+      nickName: '',
+      idCheck: false,
+      passwordRules: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/,
+      passwordRulesCheck: false,
+      passwordValidCheck: false
     }
+  },
+  computed: {
+    pwdCheck () {
+      return !this.passwordRules.test(this.password)
+    },
+    pwdValidCheck () {
+      return this.password !== this.passwordCheck
+    }
+  },
+  methods: {
+    ...mapActions(['insertUser', 'idDuplCheck']),
+    idInputClickChangeRed () {
+      this.idCheck = true
+    },
+    createUser () {
+      this.insertUser({
+        id: this.id,
+        password: sha256(this.password),
+        nickName: this.nickName
+      }).then((res) => {
+        alert('회원가입에 성공했습니다.')
+        router.replace('/login')
+      })
+    },
+    idValid () {
+      this.idDuplCheck({ id: this.id }).then((res) => {
+        if (!res) {
+          alert('사용 가능한 아이디 입니다.')
+        } else {
+          alert('아이디가 중복됩니다. 다른 아이디를 사용해주세요.')
+        }
+      })
+    }
+
+  }
 }
 </script>
 
 <style scoped>
     .idField {
-        display: inline-block ; 
-        width: 90% ; 
+        display: inline-block ;
+        width: 90% ;
         margin-right: 20px
     }
     .checkBtn {
-        display: inline-block; 
+        display: inline-block;
         width:10px
     }
 </style>
