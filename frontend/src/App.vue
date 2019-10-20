@@ -60,7 +60,6 @@
     </v-dialog>
   </v-app>
 </template>
-
 <script>
 
 export default {
@@ -77,5 +76,6 @@ export default {
       { icon: 'emoji_events', text: ' 랭킹', to: '/rank' }
     ]
   })
+
 }
 </script>
